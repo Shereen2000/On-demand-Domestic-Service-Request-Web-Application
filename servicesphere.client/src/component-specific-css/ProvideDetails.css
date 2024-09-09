@@ -1,0 +1,38 @@
+/* src/component-specific-css/ProvideDetails.css */
+.provide-details-container {
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    background-color: #fff;
+  }
+  
+  .provide-details-container h2 {
+    margin-bottom: 20px;
+  }
+  
+  .provide-details-container .form-label {
+    font-weight: 600;
+    margin-bottom: 10px;
+  }
+  
+  .provide-details-container .form-control {
+    border-radius: 4px;
+    border: 1px solid #ced4da;
+  }
+  
+  .provide-details-container .form-control:focus {
+    border-color: #80bdff;
+    box-shadow: 0 0 0 0.2rem rgba(38, 143, 255, 0.25);
+  }
+  
+  .provide-details-container .form-control,
+  .provide-details-container select {
+    padding: 0.5rem 1rem;
+    font-size: 1rem;
+  }
+  
+  .provide-details-container .form-control::placeholder {
+    color: #6c757d;
+  }
+  

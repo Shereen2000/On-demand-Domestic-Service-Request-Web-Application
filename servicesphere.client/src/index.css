@@ -1,0 +1,90 @@
+:root {
+  font-family: "Poppins", sans-serif;
+  color-scheme: dark;
+}
+
+/* src/index.css or src/App.css */
+/* src/index.css or src/App.css */
+/* src/index.css or src/App.css */
+
+/* Default styles for the step */
+.step {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  color: #6c757d; /* Default color for inactive steps */
+  padding: 5px;
+  box-sizing: border-box;
+  min-width: 60px; /* Adjust minimum width */
+  font-size: 14px; /* Font size for mobile screens */
+}
+
+/* Styles for active steps */
+.step.active {
+  color: #007bff; /* Color for the active step */
+}
+
+/* Styles for completed steps */
+.step.completed {
+  color: #28a745; /* Color for completed steps */
+}
+
+/* Styles for the divider between steps */
+.step-divider {
+  display: inline-block;
+  width: 8px; /* Smaller divider width */
+  height: 2px;
+  background-color: #6c757d;
+  margin: 0 3px; /* Reduce margin for less space */
+}
+
+/* Color for completed step divider */
+.step.completed + .step-divider {
+  background-color: #28a745;
+}
+
+/* Color for active step divider */
+.step.active + .step-divider {
+  background-color: #007bff;
+}
+
+.btn {
+  font-size: 16px; /* Default font size */
+  padding: 10px 20px; /* Default padding */
+}
+
+
+
+/* Responsive Design */
+@media (max-width: 576px) {
+  .d-flex {
+    overflow-x: auto; /* Allow horizontal scrolling on small screens if needed */
+  }
+
+  .step {
+    flex: 0 1 auto; /* Allow steps to fit in one line and shrink if necessary */
+    font-size: 14px; /* Keep font size the same on mobile screens */
+  }
+
+  .step-divider {
+    display: none; /* Hide dividers to save space on very small screens */
+  }
+
+  .btn {
+    font-size: 10px; /* Smaller font size on mobile screens */
+    padding: 8px 16px; /* Adjust padding for mobile screens */
+  }
+}
+
+/* Larger screens */
+@media (min-width: 577px) {
+  .step {
+    font-size: 16px; /* Increase font size slightly for larger screens */
+  }
+  .btn {
+    font-size: 13px; /* Default font size */
+    padding: 10px 20px; /* Default padding */
+  }
+
+}

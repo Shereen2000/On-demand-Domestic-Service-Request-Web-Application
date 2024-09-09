@@ -1,0 +1,23 @@
+{
+  "Version": 1,
+  "Hash": "+xDV/Smmen1xMYkdurVkcJaBZlGj2kcHvgpaxTaF8/4=",
+  "Source": "ServiceSphere.Server",
+  "BasePath": "_content/ServiceSphere.Server",
+  "Mode": "Default",
+  "ManifestType": "Build",
+  "ReferencedProjectsConfiguration": [
+    {
+      "Identity": "D:\\ServiceSphere\\servicesphere.client\\servicesphere.client.esproj",
+      "Version": 2,
+      "Source": "servicesphere.client",
+      "GetPublishAssetsTargets": "GetCurrentProjectPublishStaticWebAssetItems",
+      "AdditionalPublishProperties": "",
+      "AdditionalPublishPropertiesToRemove": "WebPublishProfileFile;TargetFramework;RuntimeIdentifier;SelfContained",
+      "GetBuildAssetsTargets": "GetCurrentProjectBuildStaticWebAssetItems",
+      "AdditionalBuildProperties": "",
+      "AdditionalBuildPropertiesToRemove": "WebPublishProfileFile;TargetFramework;RuntimeIdentifier;SelfContained"
+    }
+  ],
+  "DiscoveryPatterns": [],
+  "Assets": []
+}
