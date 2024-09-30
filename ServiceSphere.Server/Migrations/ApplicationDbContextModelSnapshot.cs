@@ -51,13 +51,13 @@ namespace ServiceSphere.Server.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "014d92be-d54f-459c-bf46-0783b98498eb",
+                            Id = "711c5a05-af0e-4c4e-a9e2-0ee7b046d32d",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
-                            Id = "47bf90e6-2b45-4ba3-a54e-b0c5db918851",
+                            Id = "e77e77c5-ea10-4eab-a418-04c77377046f",
                             Name = "User",
                             NormalizedName = "USER"
                         });
@@ -188,11 +188,8 @@ namespace ServiceSphere.Server.Migrations
                     b.Property<bool>("EmailConfirmed")
                         .HasColumnType("bit");
 
-                    b.Property<bool?>("IsAvailableToHire")
+                    b.Property<bool>("IsWorker")
                         .HasColumnType("bit");
-
-                    b.Property<double?>("Latitude")
-                        .HasColumnType("float");
 
                     b.Property<bool>("LockoutEnabled")
                         .HasColumnType("bit");
@@ -200,8 +197,9 @@ namespace ServiceSphere.Server.Migrations
                     b.Property<DateTimeOffset?>("LockoutEnd")
                         .HasColumnType("datetimeoffset");
 
-                    b.Property<double?>("Longitude")
-                        .HasColumnType("float");
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("NormalizedEmail")
                         .HasMaxLength(256)
@@ -220,16 +218,14 @@ namespace ServiceSphere.Server.Migrations
                     b.Property<bool>("PhoneNumberConfirmed")
                         .HasColumnType("bit");
 
-                    b.Property<string>("ProfileDescription")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("ProfilePicFileName")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int?>("Province")
+                    b.Property<int>("Role")
                         .HasColumnType("int");
 
                     b.Property<string>("SecurityStamp")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Surname")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("TwoFactorEnabled")
@@ -252,7 +248,7 @@ namespace ServiceSphere.Server.Migrations
                     b.ToTable("AspNetUsers", (string)null);
                 });
 
-            modelBuilder.Entity("ServiceSphere.Server.Models.PorfolioPicture", b =>
+            modelBuilder.Entity("ServiceSphere.Server.Models.Area", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -260,42 +256,131 @@ namespace ServiceSphere.Server.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("FileName")
+                    b.Property<int>("AreaGroupId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("SkillId")
+                    b.HasKey("Id");
+
+                    b.HasIndex("AreaGroupId");
+
+                    b.ToTable("Areas");
+                });
+
+            modelBuilder.Entity("ServiceSphere.Server.Models.AreaGroup", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    b.Property<string>("UserId")
-                        .HasColumnType("nvarchar(450)");
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("CityId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("UserId", "SkillId");
+                    b.HasIndex("CityId");
 
-                    b.ToTable("PorfolioPictures");
+                    b.ToTable("AreaGroups");
                 });
 
-            modelBuilder.Entity("ServiceSphere.Server.Models.RecruitementRequestJobSeeker", b =>
+            modelBuilder.Entity("ServiceSphere.Server.Models.Available", b =>
                 {
-                    b.Property<int>("RecruitmentRequestId")
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    b.Property<string>("JobSeekerUserId")
-                        .HasColumnType("nvarchar(450)");
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("Day")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("Reserved")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("WorkerId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("WorkerId");
+
+                    b.ToTable("Availables");
+                });
+
+            modelBuilder.Entity("ServiceSphere.Server.Models.Booking", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("AreaId")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("BookingHours")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<int>("CityId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ClientId")
+                        .HasColumnType("int");
+
+                    b.Property<TimeOnly>("ClockInTime")
+                        .HasColumnType("time");
+
+                    b.Property<string>("Formatted_Address")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Instructions")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("RequireInsurance")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("ServiceId")
+                        .HasColumnType("int");
 
                     b.Property<int>("Status")
                         .HasColumnType("int");
 
-                    b.HasKey("RecruitmentRequestId", "JobSeekerUserId");
+                    b.Property<decimal>("TotalCost")
+                        .HasColumnType("decimal(18,2)");
 
-                    b.HasIndex("JobSeekerUserId");
+                    b.Property<DateOnly>("WorkDate")
+                        .HasColumnType("date");
 
-                    b.ToTable("RecruitementRequestJobSeekers");
+                    b.Property<int>("WorkerId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AreaId");
+
+                    b.HasIndex("CityId");
+
+                    b.HasIndex("ClientId");
+
+                    b.HasIndex("ServiceId");
+
+                    b.HasIndex("WorkerId");
+
+                    b.ToTable("Bookings");
                 });
 
-            modelBuilder.Entity("ServiceSphere.Server.Models.RecruitmentRequest", b =>
+            modelBuilder.Entity("ServiceSphere.Server.Models.City", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -303,51 +388,72 @@ namespace ServiceSphere.Server.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<DateTime>("CreatedOn")
-                        .HasColumnType("datetime2");
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("DayHours")
+                    b.HasKey("Id");
+
+                    b.ToTable("Cities");
+                });
+
+            modelBuilder.Entity("ServiceSphere.Server.Models.Client", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    b.Property<decimal>("HourlyWage")
-                        .HasColumnType("decimal(18,2)");
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("ApplicationUserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ApplicationUserId")
+                        .IsUnique();
+
+                    b.ToTable("Clients");
+                });
+
+            modelBuilder.Entity("ServiceSphere.Server.Models.Experience", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("EmployeeName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateOnly>("EndDate")
+                        .HasColumnType("date");
+
+                    b.Property<int>("JobApplicationId")
+                        .HasColumnType("int");
 
                     b.Property<string>("JobDescription")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<double>("JobLatitude")
-                        .HasColumnType("float");
+                    b.Property<string>("JobTitle")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
-                    b.Property<double>("JobLongitude")
-                        .HasColumnType("float");
-
-                    b.Property<int>("NumberOfWorkersRequired")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Province")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("RecruitementEndDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("RecruiterUserId")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<DateTime>("RecruitmentStartDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("Status")
-                        .HasColumnType("int");
+                    b.Property<DateOnly>("StartDate")
+                        .HasColumnType("date");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("RecruiterUserId");
+                    b.HasIndex("JobApplicationId");
 
-                    b.ToTable("RecruitmentRequests");
+                    b.ToTable("Experiences");
                 });
 
-            modelBuilder.Entity("ServiceSphere.Server.Models.Report", b =>
+            modelBuilder.Entity("ServiceSphere.Server.Models.JobApplication", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -355,38 +461,73 @@ namespace ServiceSphere.Server.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("ConclusionStatement")
+                    b.Property<string>("ApplicationUserId")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(450)");
 
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("IncidentBrief")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int?>("RecruitmentRequestId")
+                    b.Property<int>("CityId")
                         .HasColumnType("int");
 
-                    b.Property<string>("ReportedId")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<string>("ContactNumber")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("ReporterId")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<DateTime>("UpdateAt")
+                    b.Property<DateTime>("CreatedOn")
                         .HasColumnType("datetime2");
+
+                    b.Property<string>("Formatted_Address")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("FullName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Gender")
+                        .HasColumnType("int");
+
+                    b.Property<string>("IdentificationNumber")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Nationality")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ServiceId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Surname")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("RecruitmentRequestId");
+                    b.HasIndex("ApplicationUserId")
+                        .IsUnique();
 
-                    b.HasIndex("ReportedId");
+                    b.HasIndex("CityId");
 
-                    b.HasIndex("ReporterId");
+                    b.HasIndex("ServiceId");
 
-                    b.ToTable("Reports");
+                    b.ToTable("JobApplications");
+                });
+
+            modelBuilder.Entity("ServiceSphere.Server.Models.JobApplicationAreaGroup", b =>
+                {
+                    b.Property<int>("JobApplicationId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("AreaGroupId")
+                        .HasColumnType("int");
+
+                    b.HasKey("JobApplicationId", "AreaGroupId");
+
+                    b.HasIndex("AreaGroupId");
+
+                    b.ToTable("JobApplicationAreaGroups");
                 });
 
             modelBuilder.Entity("ServiceSphere.Server.Models.Review", b =>
@@ -397,37 +538,25 @@ namespace ServiceSphere.Server.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<int>("BookingId")
+                        .HasColumnType("int");
+
                     b.Property<string>("Comment")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime>("CreatedOn")
-                        .HasColumnType("datetime2");
-
                     b.Property<int>("Rating")
                         .HasColumnType("int");
 
-                    b.Property<int?>("RecruitmentRequestId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("ReviewedUserId")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("ReviewerUserId")
-                        .HasColumnType("nvarchar(450)");
-
                     b.HasKey("Id");
 
-                    b.HasIndex("RecruitmentRequestId");
-
-                    b.HasIndex("ReviewedUserId");
-
-                    b.HasIndex("ReviewerUserId");
+                    b.HasIndex("BookingId")
+                        .IsUnique();
 
                     b.ToTable("Reviews");
                 });
 
-            modelBuilder.Entity("ServiceSphere.Server.Models.Skill", b =>
+            modelBuilder.Entity("ServiceSphere.Server.Models.Service", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -439,27 +568,132 @@ namespace ServiceSphere.Server.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<decimal>("InsuranceCost")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<decimal>("RatePerHour")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("ServiceFees")
+                        .HasColumnType("decimal(18,2)");
+
                     b.HasKey("Id");
 
-                    b.ToTable("Skills");
+                    b.ToTable("Services");
                 });
 
-            modelBuilder.Entity("ServiceSphere.Server.Models.UserSkill", b =>
+            modelBuilder.Entity("ServiceSphere.Server.Models.ServiceTask", b =>
                 {
-                    b.Property<string>("UserId")
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<decimal>("RecommendedDurationInHours")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<int>("ServiceId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ServiceId");
+
+                    b.ToTable("Tasks");
+                });
+
+            modelBuilder.Entity("ServiceSphere.Server.Models.TaskBooking", b =>
+                {
+                    b.Property<int>("BookingId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("TaskId")
+                        .HasColumnType("int");
+
+                    b.HasKey("BookingId", "TaskId");
+
+                    b.HasIndex("TaskId");
+
+                    b.ToTable("TaskBookings");
+                });
+
+            modelBuilder.Entity("ServiceSphere.Server.Models.Worker", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("AboutWorker")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ApplicationUserId")
+                        .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<int>("SkillId")
+                    b.Property<int>("CityId")
                         .HasColumnType("int");
 
-                    b.Property<int>("ProficiecyLevel")
+                    b.Property<string>("Formatted_Address")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("IdentificationNumber")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("JobCompleted")
                         .HasColumnType("int");
 
-                    b.HasKey("UserId", "SkillId");
+                    b.Property<decimal>("Rating")
+                        .HasColumnType("decimal(18,2)");
 
-                    b.HasIndex("SkillId");
+                    b.Property<int>("ServiceId")
+                        .HasColumnType("int");
 
-                    b.ToTable("UserSkills");
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ApplicationUserId")
+                        .IsUnique();
+
+                    b.HasIndex("CityId");
+
+                    b.HasIndex("ServiceId");
+
+                    b.ToTable("Workers");
+                });
+
+            modelBuilder.Entity("ServiceSphere.Server.Models.WorkerAreaGroup", b =>
+                {
+                    b.Property<int>("WorkerId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("AreaGroupId")
+                        .HasColumnType("int");
+
+                    b.HasKey("WorkerId", "AreaGroupId");
+
+                    b.HasIndex("AreaGroupId");
+
+                    b.ToTable("WorkerAreaGroups");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -513,143 +747,317 @@ namespace ServiceSphere.Server.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("ServiceSphere.Server.Models.PorfolioPicture", b =>
+            modelBuilder.Entity("ServiceSphere.Server.Models.Area", b =>
                 {
-                    b.HasOne("ServiceSphere.Server.Models.UserSkill", "Portfolio")
-                        .WithMany("Porfolio")
-                        .HasForeignKey("UserId", "SkillId")
-                        .OnDelete(DeleteBehavior.SetNull);
-
-                    b.Navigation("Portfolio");
-                });
-
-            modelBuilder.Entity("ServiceSphere.Server.Models.RecruitementRequestJobSeeker", b =>
-                {
-                    b.HasOne("ServiceSphere.Server.Models.ApplicationUser", "JobSeeker")
-                        .WithMany("JobsRequestsReceived")
-                        .HasForeignKey("JobSeekerUserId")
+                    b.HasOne("ServiceSphere.Server.Models.AreaGroup", "AreaGroup")
+                        .WithMany("Areas")
+                        .HasForeignKey("AreaGroupId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("ServiceSphere.Server.Models.RecruitmentRequest", "RecruitmentRequest")
-                        .WithMany("RecruitmentRequestJobSeekers")
-                        .HasForeignKey("RecruitmentRequestId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                    b.Navigation("AreaGroup");
+                });
+
+            modelBuilder.Entity("ServiceSphere.Server.Models.AreaGroup", b =>
+                {
+                    b.HasOne("ServiceSphere.Server.Models.City", "City")
+                        .WithMany("AreaGroups")
+                        .HasForeignKey("CityId")
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.Navigation("JobSeeker");
-
-                    b.Navigation("RecruitmentRequest");
+                    b.Navigation("City");
                 });
 
-            modelBuilder.Entity("ServiceSphere.Server.Models.RecruitmentRequest", b =>
+            modelBuilder.Entity("ServiceSphere.Server.Models.Available", b =>
                 {
-                    b.HasOne("ServiceSphere.Server.Models.ApplicationUser", "Recruiter")
-                        .WithMany("JobRequestsCreated")
-                        .HasForeignKey("RecruiterUserId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                    b.HasOne("ServiceSphere.Server.Models.Worker", "Worker")
+                        .WithMany("Availability")
+                        .HasForeignKey("WorkerId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
-                    b.Navigation("Recruiter");
+                    b.Navigation("Worker");
                 });
 
-            modelBuilder.Entity("ServiceSphere.Server.Models.Report", b =>
+            modelBuilder.Entity("ServiceSphere.Server.Models.Booking", b =>
                 {
-                    b.HasOne("ServiceSphere.Server.Models.RecruitmentRequest", "RecruitmentRequest")
-                        .WithMany("Reports")
-                        .HasForeignKey("RecruitmentRequestId")
-                        .OnDelete(DeleteBehavior.SetNull);
+                    b.HasOne("ServiceSphere.Server.Models.Area", "Area")
+                        .WithMany("Bookings")
+                        .HasForeignKey("AreaId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
-                    b.HasOne("ServiceSphere.Server.Models.ApplicationUser", "Reported")
-                        .WithMany()
-                        .HasForeignKey("ReportedId");
+                    b.HasOne("ServiceSphere.Server.Models.City", "City")
+                        .WithMany("Bookings")
+                        .HasForeignKey("CityId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
-                    b.HasOne("ServiceSphere.Server.Models.ApplicationUser", "Reporter")
-                        .WithMany("Reports")
-                        .HasForeignKey("ReporterId")
-                        .OnDelete(DeleteBehavior.Restrict);
+                    b.HasOne("ServiceSphere.Server.Models.Client", "Client")
+                        .WithMany("Bookings")
+                        .HasForeignKey("ClientId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
-                    b.Navigation("RecruitmentRequest");
+                    b.HasOne("ServiceSphere.Server.Models.Service", "Service")
+                        .WithMany("Booking")
+                        .HasForeignKey("ServiceId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
-                    b.Navigation("Reported");
+                    b.HasOne("ServiceSphere.Server.Models.Worker", "Worker")
+                        .WithMany("Bookings")
+                        .HasForeignKey("WorkerId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
-                    b.Navigation("Reporter");
+                    b.Navigation("Area");
+
+                    b.Navigation("City");
+
+                    b.Navigation("Client");
+
+                    b.Navigation("Service");
+
+                    b.Navigation("Worker");
+                });
+
+            modelBuilder.Entity("ServiceSphere.Server.Models.Client", b =>
+                {
+                    b.HasOne("ServiceSphere.Server.Models.ApplicationUser", "ApplicationUser")
+                        .WithOne("Client")
+                        .HasForeignKey("ServiceSphere.Server.Models.Client", "ApplicationUserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("ApplicationUser");
+                });
+
+            modelBuilder.Entity("ServiceSphere.Server.Models.Experience", b =>
+                {
+                    b.HasOne("ServiceSphere.Server.Models.JobApplication", "JobApplication")
+                        .WithMany("Experiences")
+                        .HasForeignKey("JobApplicationId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("JobApplication");
+                });
+
+            modelBuilder.Entity("ServiceSphere.Server.Models.JobApplication", b =>
+                {
+                    b.HasOne("ServiceSphere.Server.Models.ApplicationUser", "ApplicationUser")
+                        .WithOne("JobApplication")
+                        .HasForeignKey("ServiceSphere.Server.Models.JobApplication", "ApplicationUserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("ServiceSphere.Server.Models.City", "City")
+                        .WithMany("JobApplications")
+                        .HasForeignKey("CityId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("ServiceSphere.Server.Models.Service", "Service")
+                        .WithMany("JobApplications")
+                        .HasForeignKey("ServiceId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("ApplicationUser");
+
+                    b.Navigation("City");
+
+                    b.Navigation("Service");
+                });
+
+            modelBuilder.Entity("ServiceSphere.Server.Models.JobApplicationAreaGroup", b =>
+                {
+                    b.HasOne("ServiceSphere.Server.Models.AreaGroup", "AreaGroup")
+                        .WithMany("JobApplicationAreaGroups")
+                        .HasForeignKey("AreaGroupId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("ServiceSphere.Server.Models.JobApplication", "JobApplication")
+                        .WithMany("JobApplicationAreaGroups")
+                        .HasForeignKey("JobApplicationId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("AreaGroup");
+
+                    b.Navigation("JobApplication");
                 });
 
             modelBuilder.Entity("ServiceSphere.Server.Models.Review", b =>
                 {
-                    b.HasOne("ServiceSphere.Server.Models.RecruitmentRequest", "recruitmentRequest")
-                        .WithMany("Reviews")
-                        .HasForeignKey("RecruitmentRequestId")
-                        .OnDelete(DeleteBehavior.SetNull);
+                    b.HasOne("ServiceSphere.Server.Models.Booking", "Booking")
+                        .WithOne("Review")
+                        .HasForeignKey("ServiceSphere.Server.Models.Review", "BookingId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
-                    b.HasOne("ServiceSphere.Server.Models.ApplicationUser", "Reviewed")
-                        .WithMany("ReviewsRecieved")
-                        .HasForeignKey("ReviewedUserId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.HasOne("ServiceSphere.Server.Models.ApplicationUser", "Reviewer")
-                        .WithMany("ReviewsGiven")
-                        .HasForeignKey("ReviewerUserId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.Navigation("Reviewed");
-
-                    b.Navigation("Reviewer");
-
-                    b.Navigation("recruitmentRequest");
+                    b.Navigation("Booking");
                 });
 
-            modelBuilder.Entity("ServiceSphere.Server.Models.UserSkill", b =>
+            modelBuilder.Entity("ServiceSphere.Server.Models.ServiceTask", b =>
                 {
-                    b.HasOne("ServiceSphere.Server.Models.Skill", "Skill")
-                        .WithMany("SkilledUsers")
-                        .HasForeignKey("SkillId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                    b.HasOne("ServiceSphere.Server.Models.Service", "Service")
+                        .WithMany("Tasks")
+                        .HasForeignKey("ServiceId")
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("ServiceSphere.Server.Models.ApplicationUser", "User")
-                        .WithMany("Skills")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                    b.Navigation("Service");
+                });
+
+            modelBuilder.Entity("ServiceSphere.Server.Models.TaskBooking", b =>
+                {
+                    b.HasOne("ServiceSphere.Server.Models.Booking", "Booking")
+                        .WithMany("TasksBooked")
+                        .HasForeignKey("BookingId")
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.Navigation("Skill");
+                    b.HasOne("ServiceSphere.Server.Models.ServiceTask", "Task")
+                        .WithMany("TaskBookings")
+                        .HasForeignKey("TaskId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
-                    b.Navigation("User");
+                    b.Navigation("Booking");
+
+                    b.Navigation("Task");
+                });
+
+            modelBuilder.Entity("ServiceSphere.Server.Models.Worker", b =>
+                {
+                    b.HasOne("ServiceSphere.Server.Models.ApplicationUser", "ApplicationUser")
+                        .WithOne("Worker")
+                        .HasForeignKey("ServiceSphere.Server.Models.Worker", "ApplicationUserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("ServiceSphere.Server.Models.City", "City")
+                        .WithMany("Workers")
+                        .HasForeignKey("CityId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("ServiceSphere.Server.Models.Service", "Service")
+                        .WithMany("Workers")
+                        .HasForeignKey("ServiceId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("ApplicationUser");
+
+                    b.Navigation("City");
+
+                    b.Navigation("Service");
+                });
+
+            modelBuilder.Entity("ServiceSphere.Server.Models.WorkerAreaGroup", b =>
+                {
+                    b.HasOne("ServiceSphere.Server.Models.AreaGroup", "AreaGroup")
+                        .WithMany("WorkerAreaGroups")
+                        .HasForeignKey("AreaGroupId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("ServiceSphere.Server.Models.Worker", "Worker")
+                        .WithMany("WorkerAreaGroups")
+                        .HasForeignKey("WorkerId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("AreaGroup");
+
+                    b.Navigation("Worker");
                 });
 
             modelBuilder.Entity("ServiceSphere.Server.Models.ApplicationUser", b =>
                 {
-                    b.Navigation("JobRequestsCreated");
+                    b.Navigation("Client")
+                        .IsRequired();
 
-                    b.Navigation("JobsRequestsReceived");
+                    b.Navigation("JobApplication")
+                        .IsRequired();
 
-                    b.Navigation("Reports");
-
-                    b.Navigation("ReviewsGiven");
-
-                    b.Navigation("ReviewsRecieved");
-
-                    b.Navigation("Skills");
+                    b.Navigation("Worker")
+                        .IsRequired();
                 });
 
-            modelBuilder.Entity("ServiceSphere.Server.Models.RecruitmentRequest", b =>
+            modelBuilder.Entity("ServiceSphere.Server.Models.Area", b =>
                 {
-                    b.Navigation("RecruitmentRequestJobSeekers");
-
-                    b.Navigation("Reports");
-
-                    b.Navigation("Reviews");
+                    b.Navigation("Bookings");
                 });
 
-            modelBuilder.Entity("ServiceSphere.Server.Models.Skill", b =>
+            modelBuilder.Entity("ServiceSphere.Server.Models.AreaGroup", b =>
                 {
-                    b.Navigation("SkilledUsers");
+                    b.Navigation("Areas");
+
+                    b.Navigation("JobApplicationAreaGroups");
+
+                    b.Navigation("WorkerAreaGroups");
                 });
 
-            modelBuilder.Entity("ServiceSphere.Server.Models.UserSkill", b =>
+            modelBuilder.Entity("ServiceSphere.Server.Models.Booking", b =>
                 {
-                    b.Navigation("Porfolio");
+                    b.Navigation("Review")
+                        .IsRequired();
+
+                    b.Navigation("TasksBooked");
+                });
+
+            modelBuilder.Entity("ServiceSphere.Server.Models.City", b =>
+                {
+                    b.Navigation("AreaGroups");
+
+                    b.Navigation("Bookings");
+
+                    b.Navigation("JobApplications");
+
+                    b.Navigation("Workers");
+                });
+
+            modelBuilder.Entity("ServiceSphere.Server.Models.Client", b =>
+                {
+                    b.Navigation("Bookings");
+                });
+
+            modelBuilder.Entity("ServiceSphere.Server.Models.JobApplication", b =>
+                {
+                    b.Navigation("Experiences");
+
+                    b.Navigation("JobApplicationAreaGroups");
+                });
+
+            modelBuilder.Entity("ServiceSphere.Server.Models.Service", b =>
+                {
+                    b.Navigation("Booking");
+
+                    b.Navigation("JobApplications");
+
+                    b.Navigation("Tasks");
+
+                    b.Navigation("Workers");
+                });
+
+            modelBuilder.Entity("ServiceSphere.Server.Models.ServiceTask", b =>
+                {
+                    b.Navigation("TaskBookings");
+                });
+
+            modelBuilder.Entity("ServiceSphere.Server.Models.Worker", b =>
+                {
+                    b.Navigation("Availability");
+
+                    b.Navigation("Bookings");
+
+                    b.Navigation("WorkerAreaGroups");
                 });
 #pragma warning restore 612, 618
         }

@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.OpenApi.Extensions;
 using ServiceSphere.Server.DTOs;
 using ServiceSphere.Server.Models;
 using ServiceSphere.Server.Services;
@@ -38,14 +39,19 @@ namespace ServiceSphere.Server.Controllers
                     var appUser = new ApplicationUser
                     {
                         UserName = accountCreateDto.Email,
-                        Email = accountCreateDto.Email 
+                        Email = accountCreateDto.Email,
+                        Name = accountCreateDto.Name,
+                        Surname = accountCreateDto.Surname,
+                        IsWorker = false,
+                        PhoneNumber = accountCreateDto.PhoneNumber,
+                        Role = accountCreateDto.Role
                     };
 
                     var createdUser = await _userManager.CreateAsync(appUser, accountCreateDto.Password);
 
                     if(createdUser.Succeeded)
                     {
-                        var roleResult = await _userManager.AddToRoleAsync(appUser, "User");
+                        var roleResult = await _userManager.AddToRoleAsync(appUser, accountCreateDto.Role.GetDisplayName());
 
                         if(roleResult.Succeeded)
                         {
@@ -55,6 +61,11 @@ namespace ServiceSphere.Server.Controllers
                                         {
                                             UserName = appUser.UserName,
                                             Email = appUser.Email,
+                                            Name = appUser.Name,
+                                            Surname = appUser.Surname,
+                                            PhoneNumber = appUser.PhoneNumber,
+                                            IsWorker = appUser.IsWorker,
+                                            Role = appUser.Role.GetDisplayName(),
                                             Token = _tokenService.CreateToken(appUser),
                                         }
                                     );

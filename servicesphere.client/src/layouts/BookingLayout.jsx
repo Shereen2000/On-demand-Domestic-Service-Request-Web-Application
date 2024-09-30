@@ -17,6 +17,8 @@ const BookingLayout = () => {
   const [bookingDate, setBookingDate] = useState('');
   const [bookingHours, setBookingHours] = useState(selectedService?.EstHours || 0);
   const [selectedWorker, setSelectedWorker] = useState('');
+  const [area, setArea] = useState('');
+  const [city, setCity] = useState('');
 
   useEffect(() => {
     console.log('Selected Service:', selectedService);
@@ -59,8 +61,15 @@ const BookingLayout = () => {
         return <ServiceStep 
           selectedService={selectedService} 
           setSelectedService={setSelectedService} />;
+
       case 1:
-        return <AddressStep address={address} setAddress={setAddress} />;
+        return <AddressStep 
+          address={address} 
+          setAddress={setAddress}
+          city = {city}
+          setArea = {setArea}
+          area = {area} 
+          setCity={setCity}/>;
       case 2:
         return <DetailsStep 
           selectedService={selectedService} 

@@ -4907,11 +4907,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "d:\\ServiceSphere\\ServiceSphere.Server\\ServiceSphere.Server.csproj",
+      "projectUniqueName": "D:\\ServiceSphere\\ServiceSphere.Server\\ServiceSphere.Server.csproj",
       "projectName": "ServiceSphere.Server",
-      "projectPath": "d:\\ServiceSphere\\ServiceSphere.Server\\ServiceSphere.Server.csproj",
+      "projectPath": "D:\\ServiceSphere\\ServiceSphere.Server\\ServiceSphere.Server.csproj",
       "packagesPath": "C:\\Users\\tumis\\.nuget\\packages\\",
-      "outputPath": "d:\\ServiceSphere\\ServiceSphere.Server\\obj\\",
+      "outputPath": "D:\\ServiceSphere\\ServiceSphere.Server\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\tumis\\AppData\\Roaming\\NuGet\\NuGet.Config",

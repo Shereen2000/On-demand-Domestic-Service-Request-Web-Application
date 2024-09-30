@@ -5,6 +5,7 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using ServiceSphere.Server.Data;
 using ServiceSphere.Server.Models;
+using ServiceSphere.Server.Repositories;
 using ServiceSphere.Server.Services;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -86,6 +87,10 @@ builder.Services.AddSwaggerGen(option =>
 });
 
 builder.Services.AddScoped<ITokenService, TokenService>();
+builder.Services.AddScoped<IServiceRepo, ServiceRepo>();
+builder.Services.AddScoped<ICityRepo, CityRepo>();
+builder.Services.AddScoped<IAreaGroupRepo, AreaGroupRepo>();
+builder.Services.AddScoped<IAreaRepo, AreaRepo>();
 
 var app = builder.Build();
 

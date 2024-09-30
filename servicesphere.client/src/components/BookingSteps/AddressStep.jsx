@@ -1,53 +1,95 @@
 import React, { useState, useCallback, useEffect } from 'react';
-import { GoogleMap, useLoadScript, Marker, Autocomplete } from '@react-google-maps/api';
+import { Autocomplete } from '@react-google-maps/api';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
-// Define your Google Maps API key
-const API_KEY = process.env.REACT_APP_GOOGLE_MAPS_API_KEY;
+const API_URL = "http://localhost:5062/api/City";
 
-const AddressStep = ({ setAddress, address }) => {
-  const [map, setMap] = useState(null);
-  const [marker, setMarker] = useState(null);
+const AddressStep = ({ setAddress, address, area, setArea, city, setCity }) => {
   const [autocomplete, setAutocomplete] = useState(null);
   const [inputValue, setInputValue] = useState(address);
+  
+  const [cities, setCities] = useState([]);
+  const [areas, setAreas] = useState([]);
+  
+  const fetchCities = async () => {
+    try {
+      const response = await fetch(API_URL);
+      const data = await response.json();
+      setCities(data);
+    } catch (error) {
+      console.error("Error fetching cities:", error);
+    }
+  };
 
-  const { isLoaded } = useLoadScript({
-    googleMapsApiKey: API_KEY,
-    libraries: ['places'],
-  });
+  const extractAreasFromCity = (selectedCity) => {
+    const allAreas = [];
+    selectedCity.areaGroups.forEach(group => {
+      allAreas.push(...group.areas);
+    });
+    setAreas(allAreas);
+  };
 
-  const onMapLoad = useCallback((mapInstance) => {
-    setMap(mapInstance);
+  useEffect(() => {
+    fetchCities();
   }, []);
+
+  useEffect(() => {
+    if (city) {
+      extractAreasFromCity(city); 
+    } else {
+      setAreas([]);
+    }
+  }, [city]);
+
+  useEffect(() => {
+    setInputValue(address);
+  }, [address]);
 
   const handlePlaceSelect = () => {
     const place = autocomplete.getPlace();
     if (place && place.geometry) {
       const newAddress = place.formatted_address;
-      const newLocation = place.geometry.location;
-
-      setAddress(newAddress); // Update the address in the parent component
-      setMarker({ lat: newLocation.lat(), lng: newLocation.lng() });
-
-      map.panTo(newLocation); // Center the map on the selected address
-      setInputValue(newAddress); // Update the input field with the selected address
+      setAddress(newAddress);
+      setInputValue(newAddress);
     }
   };
 
   const handleInputChange = (e) => {
-    setInputValue(e.target.value); // Update the input field value
-    setAddress(e.target.value); // Update the address in the parent component
+    setInputValue(e.target.value);
+    setAddress(e.target.value);
   };
-
-  useEffect(() => {
-    setInputValue(address); // Set the input field value when address changes
-  }, [address]);
-
-  if (!isLoaded) return <div className="text-center">Loading...</div>;
 
   return (
     <div className="container mt-4">
-      <div className="row">
+      <div className="">
+        <div className="col-12 col-md-6 mb-3">
+          <select
+            className="form-control"
+            onChange={(e) => {
+              const selectedCity = cities.find(c => c.id === parseInt(e.target.value));
+              setCity(selectedCity);
+            }}
+          >
+            <option value="">Select a city</option>
+            {cities.map(city => (
+              <option key={city.id} value={city.id}>{city.name}</option>
+            ))}
+          </select>
+        </div>
+        <div className="col-12 col-md-6 mb-3">
+          <select
+            className="form-control"
+            onChange={(e) => {
+              const selectedArea = areas.find(a => a.id === parseInt(e.target.value));
+              setArea(selectedArea);
+            }}
+          >
+            <option value="">Select an area</option>
+            {areas.map(area => (
+              <option key={area.id} value={area.id}>{area.name}</option>
+            ))}
+          </select>
+        </div>
         <div className="col-12 col-md-6 mb-3">
           <Autocomplete
             onLoad={setAutocomplete}
@@ -62,19 +104,6 @@ const AddressStep = ({ setAddress, address }) => {
               onChange={handleInputChange}
             />
           </Autocomplete>
-        </div>
-        <div className="col-12 col-md-6">
-          <div style={{ position: 'relative', height: '0', paddingBottom: '56.25%' }}>
-            <GoogleMap
-              id="map"
-              mapContainerStyle={{ position: 'absolute', top: '0', left: '0', width: '100%', height: '100%' }}
-              zoom={15}
-              center={marker ? marker : { lat: -34.397, lng: 150.644 }}
-              onLoad={onMapLoad}
-            >
-              {marker && <Marker position={marker} />}
-            </GoogleMap>
-          </div>
         </div>
       </div>
     </div>

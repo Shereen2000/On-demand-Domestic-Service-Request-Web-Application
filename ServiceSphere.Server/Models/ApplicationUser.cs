@@ -1,34 +1,36 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime;
 using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
+using ServiceSphere.Server.Enums;
 
 namespace ServiceSphere.Server.Models
 {
     public class ApplicationUser: IdentityUser
     {
-        public bool? IsAvailableToHire { get; set; }
+        // Navigation property to the associated Client entity
+        public Client Client { get; set; }
 
-        public ICollection<UserSkill> Skills { get; set; }
+        // Navigation property to the associated Worker entity
+        public Worker Worker { get; set; }
 
-        public string? ProfileDescription { get; set; }
+        // The user's first name
+        public string Name { get; set; }
 
-        public string? ProfilePicFileName { get; set; }
+        // The user's surname (last name)
+        public string Surname { get; set; }
 
-        public double? Latitude { get; set; }
-        public double? Longitude { get; set; }
+        // Indicates whether the user is a worker (true) or a client (false)
+        public bool IsWorker { get; set; } = false;
 
-        public Province? Province { get; set; }
+        // The role of the user (could be admin, user, etc.)
+        public Role Role { get; set; }
 
-        public ICollection<Review> ReviewsGiven { get; set; }
-        public ICollection<Review> ReviewsRecieved { get; set; }
+        // Navigation property to the associated JobApplication entity
+        public JobApplication JobApplication { get; set; }
 
-        public ICollection<RecruitementRequestJobSeeker> JobsRequestsReceived { get; set; }
-        public ICollection<RecruitmentRequest> JobRequestsCreated { get; set; }
-
-        public ICollection<Report> Reports { get; set; }
-        
     }
 }

@@ -1,5 +1,8 @@
-import React, { useState } from 'react';
-import { Autocomplete } from '@react-google-maps/api';
+import React, { useState, useCallback } from 'react';
+import { Autocomplete, useLoadScript } from '@react-google-maps/api';
+import 'bootstrap/dist/css/bootstrap.min.css';
+
+const libraries = ['places'];
 
 const BecomeProvider = () => {
   const [address, setAddress] = useState('');
@@ -7,6 +10,13 @@ const BecomeProvider = () => {
   const [documents, setDocuments] = useState(null);
   const [resume, setResume] = useState(null);
   const [motivation, setMotivation] = useState('');
+  const [autocomplete, setAutocomplete] = useState(null);
+
+  // Load the Google Maps API
+  const { isLoaded } = useLoadScript({
+    googleMapsApiKey: import.meta.env.REACT_APP_GOOGLE_MAPS_API_KEY, // Ensure this is defined in your .env file
+    libraries,
+  });
 
   const handleAddressChange = (e) => {
     setAddress(e.target.value);
@@ -40,13 +50,27 @@ const BecomeProvider = () => {
     });
   };
 
+  const onPlaceChanged = () => {
+    if (autocomplete) {
+      const place = autocomplete.getPlace();
+      if (place && place.formatted_address) {
+        setAddress(place.formatted_address);
+      }
+    }
+  };
+
+  if (!isLoaded) return <div className="text-center">Loading...</div>;
+
   return (
     <div className="container mt-5">
       <h2 className="mb-4">Become a Provider</h2>
       <form onSubmit={handleSubmit} className="needs-validation" noValidate>
         <div className="mb-3">
           <h4 className="mb-2">Address</h4>
-          <Autocomplete>
+          <Autocomplete
+            onLoad={(auto) => setAutocomplete(auto)}
+            onPlaceChanged={onPlaceChanged}
+          >
             <input
               type="text"
               placeholder="Enter your address"
